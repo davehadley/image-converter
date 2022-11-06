@@ -1,23 +1,31 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import { add } from "image-converter-rust";
+import { convert } from "image-converter-rust";
+import Dropzone from "./Dropzone";
+import Download from "./Download";
 
 function App() {
-  const value = add(1, 1);
+  const [data, setData] = React.useState<ArrayBuffer>();
+
+  const callback = (buffer: ArrayBuffer) => {
+    const convertedbuffer = convert(buffer);
+    setData(convertedbuffer);
+  };
+
+  let button;
+
+  if (data == null) {
+    button = <div />;
+  } else {
+    const fileName = "testfile.png";
+    button = <Download data={data} fileName={fileName} />;
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>1 + 1 = {value}</p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <Dropzone callback={callback} />
+        {button}
       </header>
     </div>
   );
