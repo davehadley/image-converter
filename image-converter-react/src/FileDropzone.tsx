@@ -1,13 +1,16 @@
 import React from "react";
 import { useDropzone } from "react-dropzone";
+import DroppedFile from "./DroppedFile";
 
-interface DropzoneProps {
-  callback: (buffer: ArrayBuffer) => any;
+interface FileDropzoneProps {
+  onImageDropped: (droppedFiles: DroppedFile[]) => any;
+  children: React.ReactNode;
 }
 
-function Dropzone(props: DropzoneProps) {
-  const onDrop = React.useCallback((acceptedFiles: File[]) => {
+function FileDropzone(props: FileDropzoneProps) {
+  const onDrop = (acceptedFiles: File[]) => {
     acceptedFiles.forEach((file) => {
+      console.log(`FileDropzone got file ${file.name}`);
       const reader = new FileReader();
 
       reader.onabort = () => console.log("file reading was aborted");
@@ -15,20 +18,23 @@ function Dropzone(props: DropzoneProps) {
       reader.onload = () => {
         const result = reader.result;
         if (result instanceof ArrayBuffer) {
-          props.callback(result);
+          props.onImageDropped([{ name: file.name, data: result }]);
+        } else {
+          props.onImageDropped([{ name: file.name, data: undefined }]);
         }
       };
       reader.readAsArrayBuffer(file);
     });
-  }, []);
+  };
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
-    <div {...getRootProps()}>
-      <input {...getInputProps()} />
+    <div className="dropzone" {...getRootProps()}>
+      <input className="dropzoneInput" {...getInputProps()} />
       <p>Drag 'n' drop some files here, or click to select files</p>
+      {props.children}
     </div>
   );
 }
 
-export default Dropzone;
+export default FileDropzone;

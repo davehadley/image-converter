@@ -8,8 +8,8 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+  .loader {
+    animation: loader-spin infinite 0.45s ease;
   }
 }
 
@@ -28,7 +28,37 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
+.dropzone {
+  /* Fill the whole screen */
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  width: 100%;
+  /* background-color: aqua; */
+}
+
+.formatButtonIsSelected {
+  color: red;
+}
+
+.formatButtonIsNotSelected {
+  /* color: yellow; */
+}
+
+.icon,
+.loader {
+  width: 2em;
+  display: inline;
+  margin-right: 40px;
+  vertical-align: center;
+}
+
+.error {
+  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg)
+    brightness(118%) contrast(119%);
+}
+
+@keyframes loader-spin {
   from {
     transform: rotate(0deg);
   }

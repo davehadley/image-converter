@@ -34,3 +34,11 @@ repos:
       - id: mixed-line-ending
         args: [--fix=lf]
         stages: [commit]
+
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: bash -c "cd image-converter-react && npm run lint"
+        language: system
+        types_or: [javascript, ts, jsx, tsx]

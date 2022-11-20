@@ -1,15 +1,45 @@
 use std::io::Cursor;
 
-use image::{io::Reader, ImageFormat};
+use image::{io::Reader, DynamicImage, ImageFormat, ImageOutputFormat};
 use js_sys::ArrayBuffer;
 use wasm_bindgen::prelude::wasm_bindgen;
 
+// Attempt to use a smaller allocator
+extern crate wee_alloc;
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
 #[wasm_bindgen]
-pub fn convert(data: &ArrayBuffer) -> Result<ArrayBuffer, String> {
+pub enum Format {
+    Png,
+    Jpeg,
+    Bmp,
+    Gif,
+}
+
+impl From<&Format> for ImageFormat {
+    fn from(format: &Format) -> Self {
+        match format {
+            Format::Png => ImageFormat::Png,
+            Format::Jpeg => ImageFormat::Jpeg,
+            Format::Bmp => ImageFormat::Bmp,
+            Format::Gif => ImageFormat::Gif,
+        }
+    }
+}
+
+impl From<&Format> for ImageOutputFormat {
+    fn from(format: &Format) -> Self {
+        Into::<ImageFormat>::into(format).into()
+    }
+}
+
+#[wasm_bindgen]
+pub fn convert(data: &ArrayBuffer, from: Option<Format>, to: Format) -> Option<ArrayBuffer> {
     let data = array_buffer_to_vec(data);
-    let data = convert_image_data(data).ok_or("Failed to convert Image.")?;
+    let data = convert_image_data(data, from, to)?;
     let data = vec_to_array_buffer(&data);
-    Ok(data)
+    Some(data)
 }
 
 fn array_buffer_to_vec(data: &ArrayBuffer) -> Vec<u8> {
@@ -26,14 +56,22 @@ fn vec_to_array_buffer(data: &Vec<u8>) -> ArrayBuffer {
     result
 }
 
-fn convert_image_data(data: Vec<u8>) -> Option<Vec<u8>> {
-    let img = Reader::new(Cursor::new(data))
-        .with_guessed_format()
-        .ok()?
-        .decode()
-        .ok()?;
+fn convert_image_data(data: Vec<u8>, from: Option<Format>, to: Format) -> Option<Vec<u8>> {
+    let img = decode_image(data, from)?;
     let mut data = Vec::<u8>::new();
     let mut writer = Cursor::new(&mut data);
-    img.write_to(&mut writer, ImageFormat::Png).ok()?;
+    img.write_to(&mut writer, &to).ok()?;
     Some(data)
+}
+
+fn decode_image(data: Vec<u8>, from: Option<Format>) -> Option<DynamicImage> {
+    let mut img = Reader::new(Cursor::new(data));
+    let img = if let Some(from) = from {
+        let format = (&from).into();
+        img.set_format(format);
+        img
+    } else {
+        img.with_guessed_format().ok()?
+    };
+    img.decode().ok()
 }

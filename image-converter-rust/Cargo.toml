@@ -6,9 +6,30 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-image = "0.24.4"
+image = {version = "0.24.4", default-features = false, features = [
+    # WASM size is very dependent on the number of formats enabled.
+    "gif", 
+    "jpeg",  
+    "png", 
+    "bmp",
+    # "ico",
+    # "pnm", 
+    # "tga", 
+    # "tiff", 
+    # "webp", 
+    # "hdr", 
+    # "dxt", 
+    # "dds", 
+    # "farbfeld", 
+    # "jpeg_rayon",
+    # "openexr"
+]}
 js-sys = "0.3.60"
 wasm-bindgen = "0.2.83"
+wee_alloc = "0.4.5"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
+
+[profile.release]
+opt-level = "z"
