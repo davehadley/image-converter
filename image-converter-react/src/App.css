@@ -1,31 +1,61 @@
-.App {
+:root {
+  --primary-color: #052f5f;
+  --primary-color-highlight: #005377;
+  --text-on-primary-color: #ffffff;
+  --secondary-color: #c5fffd;
+  --text-on-secondary-color: #000000;
+  --disabled-color: lightgrey;
+  --text-on-disabled-color: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.header {
+  background: var(--primary-color);
+  color: var(--text-on-primary-color);
+}
+
+.headerInner {
+  padding-left: auto;
+  padding-right: auto;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  align-content: flex-start;
+}
+
+.header h1 {
+  text-align: left;
+  background: var(--primary-color);
+  color: var(--text-on-primary-color);
+  font-size: 2em;
+  margin: 0;
+  padding: 0;
+}
+
+.App,
+.License h1,
+.License h2 {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .loader {
-    animation: loader-spin infinite 0.45s ease;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
+.License {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
 }
 
 .dropzone {
@@ -34,28 +64,190 @@
   top: 0px;
   bottom: 0px;
   width: 100%;
-  /* background-color: aqua; */
 }
 
-.formatButtonIsSelected {
-  color: red;
-}
-
-.formatButtonIsNotSelected {
-  /* color: yellow; */
+.AppIcon {
+  display: inline;
+  margin: 0.5em;
+  vertical-align: center;
+  width: 6em;
+  color: white;
+  filter: invert(100%) sepia(1%) saturate(0%) hue-rotate(230deg)
+    brightness(113%) contrast(101%);
+  padding: 2em;
 }
 
 .icon,
 .loader {
-  width: 2em;
+  width: 1.5em;
   display: inline;
-  margin-right: 40px;
+  margin: 0.5em;
   vertical-align: center;
 }
 
-.error {
-  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg)
-    brightness(118%) contrast(119%);
+h2 {
+  font-size: 2em;
+  color: var(--primary-color);
+}
+
+p {
+  font-size: 1em;
+}
+
+.App ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: var(--primary-color);
+}
+
+a:hover {
+  color: var(--primary-color-highlight);
+}
+
+a:active {
+  color: var(--secondary-color);
+}
+
+button,
+input[type="button"] {
+  margin: 0.5em;
+  padding: 0.5em;
+  font-size: 2em;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.5em;
+  border: none;
+  background-color: var(--secondary-color);
+}
+
+button:hover,
+input[type="button"]:hover {
+  color: var(--text-on-primary-color);
+  background-color: var(--primary-color);
+  transition: 0.3s;
+}
+
+button:focus,
+input[type="button"]:focus {
+  color: var(--text-on-primary-color);
+  background-color: var(--primary-color-highlight);
+  transition: 0.3s;
+}
+
+button:active,
+input[type="button"]:active {
+  color: var(--text-on-primary-color);
+  background-color: var(--primary-color-highlight);
+  transition: 0.3s;
+}
+
+button:disabled,
+input[type="button"]:disabled {
+  color: var(--text-on-disabled-color);
+  background-color: var(--disabled-color);
+  transition: 0.3s;
+}
+
+.formatButtonIsSelected {
+  color: var(--primary-color);
+  outline-color: transparent;
+  outline-style: solid;
+  box-shadow: 0 0 0 0.35em var(--primary-color);
+  background-color: var(--secondary-color);
+}
+
+.formatButtonIsNotSelected {
+  color: var(--text-on-secondary-color);
+  background-color: var(--secondary-color);
+}
+
+.buttonContainer {
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  align-content: center;
+}
+
+.formatButtonContainer {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: space-around;
+}
+
+.formatButtonContainerInner {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+}
+
+@media (min-width: 768px) {
+  .formatButtonContainer,
+  .buttonContainer,
+  .introTextContainer,
+  .headerInner {
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    min-width: 768px;
+  }
+}
+
+@media (max-width: 768px) {
+  .formatButtonContainer,
+  .buttonContainer,
+  .introTextContainer,
+  .headerInner {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+}
+
+.buttonContainer div {
+  display: flex;
+}
+
+.downloadAllButton,
+.downloadButton,
+.addFileButton {
+  flex-grow: 4;
+  text-align: center;
+}
+
+.deleteItemButton {
+  flex: 0;
+}
+
+.icon.error {
+  filter: invert(22%) sepia(84%) saturate(5498%) hue-rotate(355deg)
+    brightness(104%) contrast(133%);
+}
+
+button:disabled > img,
+button > img {
+  filter: invert(0%) sepia(5%) saturate(7500%) hue-rotate(228deg)
+    brightness(98%) contrast(106%);
+}
+
+button:hover > img,
+button:active > img,
+button:focus > img {
+  filter: invert(100%) sepia(1%) saturate(0%) hue-rotate(230deg)
+    brightness(113%) contrast(101%);
+}
+
+/* Animate the processing icon */
+@media (prefers-reduced-motion: no-preference) {
+  .loader {
+    animation: loader-spin infinite 0.45s ease;
+  }
 }
 
 @keyframes loader-spin {

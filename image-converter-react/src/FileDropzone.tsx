@@ -1,9 +1,11 @@
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import DroppedFile from "./DroppedFile";
+import plus from "./plus.svg";
 
 interface FileDropzoneProps {
   onImageDropped: (droppedFiles: DroppedFile[]) => any;
+  childrenAfterAdd: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -26,13 +28,25 @@ function FileDropzone(props: FileDropzoneProps) {
       reader.readAsArrayBuffer(file);
     });
   };
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    noClick: true,
+  });
+  const {
+    getRootProps: getClickableProps,
+    getInputProps: getClickableInputProps,
+  } = useDropzone({ onDrop, noClick: false });
 
   return (
     <div className="dropzone" {...getRootProps()}>
       <input className="dropzoneInput" {...getInputProps()} />
-      <p>Drag 'n' drop some files here, or click to select files</p>
       {props.children}
+      <button className="addFileButton" {...getClickableProps()}>
+        <img src={plus} className="icon" alt="OK"></img>
+        <input {...getClickableInputProps()} />
+        Add File
+      </button>
+      {props.childrenAfterAdd}
     </div>
   );
 }

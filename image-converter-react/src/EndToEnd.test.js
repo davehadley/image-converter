@@ -4,6 +4,8 @@ import path from "path";
 import os from "os";
 import { mkdtemp } from "node:fs/promises";
 
+jest.setTimeout(10000);
+
 describe("App", () => {
   let browser;
   let page;
@@ -13,22 +15,27 @@ describe("App", () => {
     page = await browser.newPage();
   });
 
-  it("Page contains Download All Button", async () => {
-    await page.goto("http://localhost:3000");
-    await page.waitForSelector(".downloadAllButton");
-    const text = await page.$eval(".downloadAllButton", (e) => e.textContent);
-    expect(text).toContain("Download all");
-  });
-
-  const extensions = ["png", "gif", "jpeg", "bmp"];
-  const extensionpairs = extensions.flatMap((ext1) =>
-    extensions.map((ext2) => [ext1, ext2])
+  const fromExtensions = ["png"]; // "gif", "jpeg", "bmp"];
+  const toExtensions = [
+    "png",
+    "gif",
+    "jpeg",
+    "bmp",
+    "pbm",
+    "tiff",
+    "tga",
+    "ico",
+    "ff",
+  ];
+  const extensionpairs = fromExtensions.flatMap((ext1) =>
+    toExtensions.map((ext2) => [ext1, ext2])
   );
 
   it.each(extensionpairs)(
     "Uploaded %s successfully converted to %s",
     async (fromExtension, toExtension) => {
       expect(fs.existsSync(`./test/test_image.${fromExtension}`)).toBe(true);
+      page = await browser.newPage();
       await page.goto("http://localhost:3000");
       // Configure the page to allow downloads to a temporary directory
       const directory = await mkdtemp(
@@ -39,16 +46,19 @@ describe("App", () => {
         behavior: "allow",
         downloadPath: directory,
       });
+      // Select the output format
+      const formatButton = await page.waitForSelector(
+        `.formatButton${toExtension}:not([disabled])`
+      );
+      await formatButton.click();
+      await page.waitForSelector(
+        `.formatButton${toExtension}.formatButtonIsSelected:not([disabled])`
+      );
       // Upload the input file
       const fileInput = await page.waitForSelector(".dropzoneInput");
       await fileInput.uploadFile(`./test/test_image.${fromExtension}`);
-      // Select the output format
-      const formatButton = await page.waitForSelector(
-        `.formatButton${toExtension}`
-      );
-      await formatButton.click();
+      // download button should appear in loading state
       // Download the output file
-      await page.waitForSelector(".downloadButton:not([disabled])");
       const expectedOutputFilePath = path.join(
         directory,
         `test_image.${toExtension}`
@@ -56,11 +66,19 @@ describe("App", () => {
       const downloadExists = () => {
         return fs.existsSync(expectedOutputFilePath);
       };
-
       // Test file can be downloaded with it's own download button
       expect(downloadExists()).toBe(false);
-      await page.click(".downloadButton:not([disabled])");
-      await retry(10, 1000, downloadExists);
+      // give react time to respond to the formatButton press
+      // if we immediately press it the button may from not-disabled from the
+      // last format
+      const downloadButton = await page.waitForSelector(
+        ".downloadButton.ok:not([disabled])"
+      );
+      // sometimes pressing the download button fails?
+      await retryAsync(5, 2000, async () => {
+        await downloadButton.click();
+        return downloadExists();
+      });
       expect(downloadExists()).toBe(true);
 
       // Test the download button has the correct label
@@ -70,8 +88,11 @@ describe("App", () => {
       // Test file can be downloaded with the "Download All Button"
       fs.rmSync(expectedOutputFilePath);
       expect(downloadExists()).toBe(false);
-      await page.click(".downloadAllButton:not([disabled])");
-      await retry(10, 1000, downloadExists);
+      const downloadAllButton = await page.waitForSelector(
+        ".downloadAllButton:not([disabled])"
+      );
+      await downloadAllButton.click();
+      await retry(5, 1000, downloadExists);
       expect(downloadExists()).toBe(true);
 
       // Clean up the temporary directory
@@ -91,6 +112,16 @@ function sleep(time) {
 async function retry(num, delay, callable) {
   for (let i = 0; i < num; i++) {
     if (callable()) {
+      return;
+    }
+    await sleep(delay);
+  }
+  throw new Error("Too many failed attempts");
+}
+
+async function retryAsync(num, delay, callable) {
+  for (let i = 0; i < num; i++) {
+    if (await callable()) {
       return;
     }
     await sleep(delay);

@@ -6,11 +6,19 @@ export interface ConvertedFile {
   state: "success";
 }
 
+export interface WaitingForConversionResult {
+  name: string;
+  state: "processing";
+}
+
 export interface FailedToConvertFile {
   name: string;
   state: "failed";
 }
 
-export type MaybeConverted = ConvertedFile | FailedToConvertFile;
+export type MaybeConverted =
+  | ConvertedFile
+  | FailedToConvertFile
+  | WaitingForConversionResult;
 
 export default ConvertedFile;

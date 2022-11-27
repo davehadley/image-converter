@@ -1,4 +1,5 @@
 import { Format } from "image-converter-rust";
+import extensionFromFormat from "./extensionFromFormat";
 
 interface FormatPickerProps {
   format: Format;
@@ -21,17 +22,37 @@ function FormatPicker(props: FormatPickerProps) {
           : "formatButtonIsNotSelected";
       className += ` formatButton${format.toLowerCase()} `;
       return (
-        <button
+        <input
           className={className}
           type="button"
           onClick={onClick}
           key={format}
-        >
-          {format.toLowerCase()}
-        </button>
+          value={"." + extensionFromFormat(Format[format])}
+        />
       );
     });
-  return <div>{content}</div>;
+  const chunkedContent = chunked(content, 3).map((it) => (
+    <div className="formatButtonContainerInner">{it}</div>
+  ));
+  return (
+    <div className="formatPickerContainer">
+      <h2>Choose output format</h2>
+      <div className="formatButtonContainer">{chunkedContent}</div>
+    </div>
+  );
+}
+
+function chunked<Type>(array: Type[], size: number): Type[][] {
+  const initial: Type[][] = [[]];
+  return array.reduce((outerArray, value) => {
+    const innerArray = outerArray[outerArray.length - 1];
+    if (innerArray.length < size) {
+      innerArray.push(value);
+    } else {
+      outerArray.push([value]);
+    }
+    return outerArray;
+  }, initial);
 }
 
 export default FormatPicker;
