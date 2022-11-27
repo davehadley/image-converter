@@ -6,6 +6,8 @@ This example application demonstrates using
 convert images the between formats supported by the
 [Image crate](https://crates.io/crates/image).
 
+See an example of the application running at <https://free-image-converter.davehadley.co.uk/>.
+
 ## Build, Test and Run
 
 Install the
