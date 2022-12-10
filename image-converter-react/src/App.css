@@ -52,12 +52,6 @@ code {
   text-align: center;
 }
 
-.License {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 800px;
-}
-
 .dropzone {
   /* Fill the whole screen */
   position: absolute;
@@ -116,8 +110,9 @@ button,
 input[type="button"] {
   margin: 0.5em;
   padding: 0.5em;
-  font-size: 2em;
+  font-size: 1em;
   display: inline-flex;
+  word-break: break-all;
   align-items: center;
   border-radius: 0.5em;
   border: none;
@@ -191,10 +186,12 @@ input[type="button"]:disabled {
   .formatButtonContainer,
   .buttonContainer,
   .introTextContainer,
+  .License,
   .headerInner {
     margin-left: auto;
     margin-right: auto;
     width: 50%;
+    max-width: 90%;
     min-width: 768px;
   }
 }
@@ -203,10 +200,11 @@ input[type="button"]:disabled {
   .formatButtonContainer,
   .buttonContainer,
   .introTextContainer,
+  .License,
   .headerInner {
     margin-left: auto;
     margin-right: auto;
-    width: 100%;
+    width: 90%;
   }
 }
 
