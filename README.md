@@ -3,7 +3,7 @@
 This example application demonstrates using
 [Rust WASM bindgen](https://rustwasm.github.io/) in a functional
 [React](https://reactjs.org/) application. The application allows the user to
-convert images the between formats supported by the
+convert images between formats supported by the
 [Image crate](https://crates.io/crates/image).
 
 See an example of the application running at <https://free-image-converter.davehadley.co.uk/>.
