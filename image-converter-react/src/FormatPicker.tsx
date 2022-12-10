@@ -31,8 +31,13 @@ function FormatPicker(props: FormatPickerProps) {
         />
       );
     });
-  const chunkedContent = chunked(content, 3).map((it) => (
-    <div className="formatButtonContainerInner">{it}</div>
+  const chunkedContent = chunked(content, 3).map((it, index) => (
+    <div
+      className="formatButtonContainerInner"
+      key={`formatPickerGroup${index}`}
+    >
+      {it}
+    </div>
   ));
   return (
     <div className="formatPickerContainer">
